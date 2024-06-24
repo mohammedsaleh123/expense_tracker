@@ -24,6 +24,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.sizeOf(context);
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => sl<HomeCubit>()),
@@ -33,7 +34,7 @@ class MyApp extends StatelessWidget {
               ..getTransactions()),
       ],
       child: ScreenUtilInit(
-        designSize: const Size(360, 690),
+        designSize: Size(size.width, size.height),
         minTextAdapt: true,
         splitScreenMode: true,
         child: MaterialApp(

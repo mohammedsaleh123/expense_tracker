@@ -47,12 +47,12 @@ class HomeView extends StatelessWidget {
             iconSize: 30.sp,
             items: const [
               BottomNavigationBarItem(
-                icon: Icon(Icons.home),
-                label: 'Home',
+                icon: Icon(Icons.money),
+                label: 'Income',
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.analytics),
-                label: 'Analytics',
+                label: 'Expenses',
               )
             ],
             onTap: (index) {

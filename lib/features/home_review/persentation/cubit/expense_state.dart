@@ -95,3 +95,6 @@ final class GetBudgetsError extends ExpenseState {
   const GetBudgetsError(this.message);
 }
 
+final class ChangeExpensesByDateLoading extends ExpenseState {}
+
+final class ChangeExpensesByDate extends ExpenseState {}

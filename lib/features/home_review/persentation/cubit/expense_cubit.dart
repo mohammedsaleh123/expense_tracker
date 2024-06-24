@@ -12,6 +12,7 @@ import 'package:expense_tracker/features/home_review/domain/use_cases/transactio
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 
 part 'expense_state.dart';
 
@@ -44,6 +45,7 @@ class ExpenseCubit extends Cubit<ExpenseState> {
 
   List<BudgetEntity> budgets = [];
   List<TransactionEntity> transactions = [];
+  List<TransactionEntity> filteredTransactions = [];
   double totalBudgets = 0;
   double totalTransaction = 0;
 
@@ -66,33 +68,6 @@ class ExpenseCubit extends Cubit<ExpenseState> {
       );
     } catch (e) {
       emit(AddBudgetError(e.toString()));
-    }
-  }
-
-  Future<void> updateBudget(
-      int? id, double income, String incomeName, String incomeDate) async {
-    emit(UpdateBudgetLoading());
-    try {
-      await updateBudgetUseCase
-          .call(id, income, incomeName, incomeDate)
-          .then((value) {
-        emit(UpdateBudgetSuccess());
-        getBudgets();
-      });
-    } catch (e) {
-      emit(UpdateBudgetError(e.toString()));
-    }
-  }
-
-  Future<void> deleteBudget(int id) async {
-    emit(DeleteBudgetLoading());
-    try {
-      await deleteBudgetUseCase.call(id).then((value) {
-        emit(DeleteBudgetSuccess());
-        getBudgets();
-      });
-    } catch (e) {
-      emit(DeleteBudgetError(e.toString()));
     }
   }
 
@@ -132,6 +107,7 @@ class ExpenseCubit extends Cubit<ExpenseState> {
       },
       (r) {
         transactions = r;
+        filteredTransactions = r;
         totalTransaction = r.isNotEmpty
             ? r.map((e) => e.expense).reduce(
                 (value, element) {
@@ -167,21 +143,6 @@ class ExpenseCubit extends Cubit<ExpenseState> {
     }
   }
 
-  Future<void> updateTransaction(int? id, double expense, String expenseName,
-      String expenseType, String transactionDate) async {
-    emit(UpdateTransactionLoading());
-    try {
-      await updateTransactionsUseCases
-          .call(id, expense, expenseName, expenseType, transactionDate)
-          .then((value) {
-        emit(UpdateTransactionSuccess());
-        getTransactions();
-      });
-    } catch (e) {
-      emit(UpdateTransactionError(e.toString()));
-    }
-  }
-
   Future<void> deleteTransaction(int id) async {
     emit(DeleteTransactionLoading());
     try {
@@ -194,4 +155,14 @@ class ExpenseCubit extends Cubit<ExpenseState> {
     }
   }
 
+  void changeExpensesByDate(DateTime selectedDay) {
+    emit(ChangeExpensesByDateLoading());
+    filteredTransactions = transactions
+        .where((transaction) =>
+            DateFormat.yMMMEd()
+                .format(DateTime.parse(transaction.transactionDate)) ==
+            DateFormat.yMMMEd().format(selectedDay))
+        .toList();
+    emit(ChangeExpensesByDate());
+  }
 }
